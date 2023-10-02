@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const dotenv = require("dotenv");
+import mongoose from 'mongoose';
+import dotenv from "dotenv";
 dotenv.config('./.env');
 const mongooseUri = process.env.MONGOOSE_URL
-module.exports = () => {
+export default () => {
     try {
         mongoose.connect(mongooseUri,
             {

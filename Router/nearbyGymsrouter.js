@@ -1,5 +1,5 @@
 import express from 'express';
-import { getNearbyGyms } from '../controllers/nearbyGyms.js';
+import { getNearbyGyms } from '../Controllers/nearbyGyms.js';
 
 const Router = express.Router();
 

@@ -1,5 +1,6 @@
-const router = require('express').Router();
-const getdataController = require('../Controllers/getdataController');
-const requireUser = require('../Middelwares/requireUser');
-router.get('/userdata', getdataController.userdataController);
-module.exports = router;
+import express from 'express';
+import getdataController from '../Controllers/getdataController.js';
+const Router = express.Router();
+// import requireUser from '../Middelwares/requireUser';
+Router.get('/userdata', getdataController.userdataController);
+export default Router;
