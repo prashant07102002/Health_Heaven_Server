@@ -5,6 +5,6 @@ const userdataController = (req, res) => {
         console.log(error);
     }
 }
-module.exports = {
+export default {
     userdataController,
 }
