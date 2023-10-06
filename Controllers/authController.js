@@ -1,15 +1,20 @@
 import user from "../Models/User.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import { error, success } from "../Utils/responseWrapper.js";
+
 const signupController = async (req, res) => {
     try {
         const { email, password, name } = req.body;
         if (!email || !password || !name) {
-            res.status(400).send("!! Either name,email or password missing !!");
+            // res.status(400).send("!! Either name,email or password missing !!");
+            res.send(error(400, "Either name or email or password missing!!"))
         }
         const existing_user = await user.findOne({ email });
         if (existing_user) {
-            res.status(409).send("!! User already exists !!");
+            res.send(error(409, "User already exist!!"))
+            // res.status(409).send("!! User already exists !!");
         }
         const hashedpassword = await bcrypt.hash(password, 10);
         const User = await user.create({
@@ -20,47 +25,93 @@ const signupController = async (req, res) => {
         return res.status(201).json({
             User,
         })
-    } catch (error) {
-        console.log(error);
+    } catch (e) {
+        res.send(error(500, e.message));
     }
 }
 const loginController = async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            res.status(400).send("!! Either name,email or password missing !!");
+            res.send(error(400, "Either email or password missing!!"))
+            // res.status(400).send("!! Either name,email or password missing !!");
         }
         const existing_user = await user.findOne({ email });
         if (!existing_user) {
-            res.status(404).send("!! User not found !!");
+            res.send(error(409, "User doesn't exist!!"))
+            // res.status(404).send("!! User not found !!");
         }
         const matched = await bcrypt.compare(password, existing_user.password);
         if (!matched) {
-            res.status(203).send("!! Wrong email id or password !!");
+            res.send(error(203, "Incorrect email Id or password!!"))
+            // res.status(203).send("!! Wrong email id or password !!");
         }
-        const accesstoken = generateAccessToken({
-            email: existing_user.email,
-            id: existing_user.id,
+        const accessToken = generateAccessToken({
+            _id: existing_user._id,
         })
-        return res.status(200).json({
-            accesstoken,
+        const refreshToken = generateRefreshToken({
+            _id: existing_user._id,
         })
+        res.cookie('jwt', refreshToken, {
+            httpOnly: true,
+            secure: true,
+        })
+        return res.send(success(200, {
+            accessToken
+        }))
+        // return res.status(200).json({
+        //     accessToken
+        // })
     } catch (error) {
         console.log(error);
     }
 }
+const generateRefreshTokenController = async (req, res) => {
+    try {
+        const cookies = req.cookies;
+        if (!cookies.jwt) {
+            // return res.send("!! Cannot find refresh token in the cookie !!");
+            res.send(error(401, "Refresh token in cookie is required!!"))
+        }
+        const refreshToken = cookies.jwt;
+        const decode = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_PRIVATE_KEY);
+        const _id = decode._id;
+        const accessToken = generateAccessToken({ _id });
+        // return res.send({ accessToken });
+        res.send(success(201, {
+            accessToken
+        }))
+    } catch (e) {
+        // console.log(error);
+        // return res.status(401).send("Invalid Refresh Token");
+        console.log(e);
+        return res.send(error(401, "Invalid Refresh Access Key!!"))
+    }
+}
 const generateAccessToken = (data) => {
     try {
-        const token = jwt.sign(data, "abcdefghijklmnopqrstuvwxyz", {
-            expiresIn: '20s'
+        const token = jwt.sign(data, process.env.ACCESS_TOKEN_PRIVATE_KEY, {
+            expiresIn: "1y",
         });
         return token;
     } catch (error) {
         console.log(error);
     }
 }
+const generateRefreshToken = (data) => {
+    try {
+        const token = jwt.sign(data, process.env.REFRESH_TOKEN_PRIVATE_KEY, {
+            expiresIn: "1y",
+        });
+        return token;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export default {
     signupController,
-    loginController
+    loginController,
+    generateRefreshTokenController
 
 }

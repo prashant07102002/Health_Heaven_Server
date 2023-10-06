@@ -6,11 +6,13 @@ import morgan from 'morgan';
 import dbConnect from './dbConnect.js';
 import authRouter from './Router/authrouter.js';
 import getDataRouter from './Router/getdatarouter.js';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan('common'));
+app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/getdata', getDataRouter);
 app.use('/gym', nearbyGymsRoutes);
