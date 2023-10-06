@@ -1,36 +1,51 @@
 import fetch from "node-fetch";
+import results from '../testGymData.js';
+import { nearbyGyms } from '../testGymData.js';
 
-export const getNearbyGyms = async (req, res) => {
+export const findGyms = async (req, res) => {
   try {
-    const searchParams = new URLSearchParams({
-      query: 'gyms',
-      ll: '22.7522398,75.8812202',
-      limit: 20
-    });
-    const results = await fetch(
-      `https://api.foursquare.com/v3/places/search?${searchParams}`,
-      {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          Authorization: process.env.GYM_SEARCH_SECRET
-        }
-      }
-    );
-    const data = await results.json();
-    console.log(data);
-    res.status(200).send(data);
+    const query = req.header("query");
+    
+    // const results = await fetch(
+    //   `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${process.env.GOOGLE_PLACES_KEY}`,
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       Accept: 'application/json',
+    //       Authorization: process.env.GOOGLE_PLACES_KEY
+    //     }
+    //   }
+    // );
 
-    // const url = `https://maps.googleapis.com/maps/api/place/details/json
-    // ?place_id=ChIJrTLr-GyuEmsRBfy61i59si0
-    // &fields=address_components
-    // &key=${process.env.GOOGLE_PLACES_KEY}`;
-
-    // const result = await fetch(url);
-    // console.log(result);
+    // const data = await results.json();
+    // console.log(data);
+    // console.log(results);
+    res.status(200).send({results});
 
   } catch (err) {
     console.log(err);
     res.status(400).json({ 'error': err });
   }
-}
+};
+
+export const getNearbyGyms = async (req, res) => {
+  try {
+    const latitude = req.header("latitude");
+    const longitude = req.header("longitude");
+
+    // const response = await fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=gym&location=${latitude},${longitude}&radius=1500&key=${process.env.GOOGLE_PLACES_KEY}`,{
+    //   method: 'GET',
+    //   headers: {
+    //     latitude,
+    //     longitude
+    //   }
+    // });
+
+    // const data = await response.json();
+
+    res.status(200).send({results: nearbyGyms});
+  } catch (error) {
+    console.log(err);
+    res.status(400).json({ 'error': err });
+  }
+};
