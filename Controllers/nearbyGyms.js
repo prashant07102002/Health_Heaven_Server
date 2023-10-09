@@ -4,8 +4,8 @@ import { nearbyGyms } from '../testGymData.js';
 
 export const findGyms = async (req, res) => {
   try {
-    const query = req.header("query");
-    
+    const { query } = req.body;
+    console.log("data of gym search ", query);
     // const results = await fetch(
     //   `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${process.env.GOOGLE_PLACES_KEY}`,
     //   {
@@ -20,7 +20,7 @@ export const findGyms = async (req, res) => {
     // const data = await results.json();
     // console.log(data);
     // console.log(results);
-    res.status(200).send({results});
+    res.status(200).send({ results });
 
   } catch (err) {
     console.log(err);
@@ -43,7 +43,7 @@ export const getNearbyGyms = async (req, res) => {
 
     // const data = await response.json();
 
-    res.status(200).send({results: nearbyGyms});
+    res.status(200).send({ results: nearbyGyms });
   } catch (error) {
     console.log(err);
     res.status(400).json({ 'error': err });

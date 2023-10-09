@@ -6,10 +6,10 @@ import { error, success } from "../Utils/responseWrapper.js";
 
 const signupController = async (req, res) => {
     try {
-        const { email, password, name } = req.body;
-        if (!email || !password || !name) {
+        const { email, password, firstName, lastName } = req.body;
+        if (!email || !password || !firstName || !lastName) {
             // res.status(400).send("!! Either name,email or password missing !!");
-            res.send(error(400, "Either name or email or password missing!!"));
+            res.send(error(400, "Either name or email, password or name missing!!"));
             return;
         }
         const existing_user = await user.findOne({ email });
@@ -20,13 +20,16 @@ const signupController = async (req, res) => {
         }
         const hashedpassword = await bcrypt.hash(password, 10);
         const User = await user.create({
-            name,
+            firstName,
+            lastName,
             email,
             password: hashedpassword
         })
-        return res.status(201).json({
-            User,
-        })
+        await User.save();
+        // return res.status(201).json({
+        //     User,
+        // })
+        return res.send(success(201, { User }))
     } catch (e) {
         res.send(error(500, e.message));
     }
