@@ -9,11 +9,13 @@ const signupController = async (req, res) => {
         const { email, password, name } = req.body;
         if (!email || !password || !name) {
             // res.status(400).send("!! Either name,email or password missing !!");
-            res.send(error(400, "Either name or email or password missing!!"))
+            res.send(error(400, "Either name or email or password missing!!"));
+            return;
         }
         const existing_user = await user.findOne({ email });
         if (existing_user) {
             res.send(error(409, "User already exist!!"))
+            return;
             // res.status(409).send("!! User already exists !!");
         }
         const hashedpassword = await bcrypt.hash(password, 10);
@@ -32,18 +34,22 @@ const signupController = async (req, res) => {
 const loginController = async (req, res) => {
     try {
         const { email, password } = req.body;
+        console.log(req.body);
         if (!email || !password) {
             res.send(error(400, "Either email or password missing!!"))
+            return;
             // res.status(400).send("!! Either name,email or password missing !!");
         }
         const existing_user = await user.findOne({ email });
         if (!existing_user) {
-            res.send(error(409, "User doesn't exist!!"))
+            res.send(error(409, "User doesn't exist!!"));
+            return;
             // res.status(404).send("!! User not found !!");
         }
         const matched = await bcrypt.compare(password, existing_user.password);
         if (!matched) {
             res.send(error(203, "Incorrect email Id or password!!"))
+            return;
             // res.status(203).send("!! Wrong email id or password !!");
         }
         const accessToken = generateAccessToken({
@@ -91,7 +97,7 @@ const generateRefreshTokenController = async (req, res) => {
 const generateAccessToken = (data) => {
     try {
         const token = jwt.sign(data, process.env.ACCESS_TOKEN_PRIVATE_KEY, {
-            expiresIn: "1y",
+            expiresIn: "20s",
         });
         return token;
     } catch (error) {
