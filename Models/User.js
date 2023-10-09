@@ -9,6 +9,15 @@ const userSchema = Schema({
     password: {
         type: String,
         require: true
+    },
+    firstName: {
+        type: String,
+        require: true
+    },
+    lastName: {
+        type: String,
+        require: true
     }
+
 })
 export default model('user', userSchema);
