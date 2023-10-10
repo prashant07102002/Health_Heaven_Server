@@ -18,6 +18,5 @@ const userSchema = Schema({
         type: String,
         require: true
     }
-
 })
 export default model('user', userSchema);

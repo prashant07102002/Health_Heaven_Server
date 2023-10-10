@@ -61,13 +61,12 @@ const loginController = async (req, res) => {
         const refreshToken = generateRefreshToken({
             _id: existing_user._id,
         })
+
         res.cookie('jwt', refreshToken, {
             httpOnly: true,
             secure: true,
         })
-        return res.send(success(200, {
-            accessToken
-        }))
+        return res.send(success(200, {user: existing_user, accessToken}))
         // return res.status(200).json({
         //     accessToken
         // })
