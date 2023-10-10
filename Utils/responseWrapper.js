@@ -3,7 +3,6 @@ export const success = (statusCode, result) => {
         status: 'Ok',
         statusCode,
         result,
-
     }
 }
 

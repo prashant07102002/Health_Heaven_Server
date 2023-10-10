@@ -1,14 +1,12 @@
 import { success } from "../Utils/responseWrapper.js";
+import User from '../Models/User.js';
 
-const userdataController = (req, res) => {
+export const userdataController = async (req, res) => {
     try {
-        console.log("the id is", req._id);
-        res.send(success(200, "this is the user data"));
-
+        const userData = await User.find({_id});
+        console.log(userData);
+        res.send(success(200, userData));
     } catch (error) {
         console.log(error);
     }
-}
-export default {
-    userdataController,
 }
