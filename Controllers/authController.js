@@ -74,6 +74,17 @@ const loginController = async (req, res) => {
         console.log(error);
     }
 }
+const logoutController = async (req, res) => {
+    try {
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: true,
+        })
+        return res.send(success(200, 'User logged Out'))
+    } catch (e) {
+        return res.send(error(500, e.message));
+    }
+}
 const generateRefreshTokenController = async (req, res) => {
     try {
         const cookies = req.cookies;
@@ -120,6 +131,7 @@ const generateRefreshToken = (data) => {
 export default {
     signupController,
     loginController,
-    generateRefreshTokenController
+    generateRefreshTokenController,
+    logoutController
 
 }

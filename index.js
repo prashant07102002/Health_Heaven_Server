@@ -21,7 +21,7 @@ app.use(cors({
 
 app.use('/auth', authRouter);
 app.use('/getdata', getDataRouter);
-app.use('/gym', nearbyGymsRoutes);
+app.use('/services', nearbyGymsRoutes);
 
 app.get('/', (req, res) => {
     res.status(200).send("Hello from server")
