@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { error } from '../Utils/responseWrapper.js';
+import { error } from '../Router/Utils/responseWrapper.js';
 export default async (req, res, next) => {
     try {
         if (!req.headers || !req.headers.authorization || !req.headers.authorization.startsWith('Bearer')) {

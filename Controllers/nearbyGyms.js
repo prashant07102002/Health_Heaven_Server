@@ -4,8 +4,9 @@ import { nearbyGyms } from '../testGymData.js';
 
 export const findGyms = async (req, res) => {
   try {
-    const { query } = req.body;
-    console.log("data of gym search ", query);
+    const { query } = req.query;
+    console.log(query);
+    // console.log("data of gym search ", query);
     // const results = await fetch(
     //   `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${query}&key=${process.env.GOOGLE_PLACES_KEY}`,
     //   {

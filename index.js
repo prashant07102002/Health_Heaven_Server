@@ -7,6 +7,7 @@ import dbConnect from './dbConnect.js';
 import authRouter from './Router/authrouter.js';
 import getDataRouter from './Router/getdatarouter.js';
 import cookieParser from 'cookie-parser';
+import storeRoutes from './Router/storeRouter.js';
 
 const app = express();
 dotenv.config('./.env');
@@ -22,6 +23,7 @@ app.use(cors({
 app.use('/auth', authRouter);
 app.use('/getdata', getDataRouter);
 app.use('/services', nearbyGymsRoutes);
+app.use('/services', storeRoutes);
 
 app.get('/', (req, res) => {
     res.status(200).send("Hello from server")
