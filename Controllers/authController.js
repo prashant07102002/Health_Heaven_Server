@@ -2,14 +2,17 @@ import user from "../Models/User.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import crypto from 'crypto';
 import { error, success } from "../Utils/responseWrapper.js";
+import transporter from "../Utils/emailSetup.js";
+import { info } from "console";
 
 const signupController = async (req, res) => {
     try {
-        const { email, password, firstName, lastName } = req.body;
-        if (!email || !password || !firstName || !lastName) {
+        const { email, password, firstName, lastName, generatedOtp, enteredOtp } = req.body;
+        if (!email || !password || !firstName || !lastName || !enteredOtp) {
             // res.status(400).send("!! Either name,email or password missing !!");
-            res.send(error(400, "Either name or email, password or name missing!!"));
+            res.send(error(400, "All fields are required"));
             return;
         }
         const existing_user = await user.findOne({ email });
@@ -17,6 +20,10 @@ const signupController = async (req, res) => {
             res.send(error(409, "User already exist!!"))
             return;
             // res.status(409).send("!! User already exists !!");
+        }
+        if (enteredOtp != generatedOtp) {
+            res.send(error(203, "Wrong OTP"));
+            return;
         }
         const hashedpassword = await bcrypt.hash(password, 10);
         const User = await user.create({
@@ -66,7 +73,7 @@ const loginController = async (req, res) => {
             httpOnly: true,
             secure: true,
         })
-        return res.send(success(200, {user: existing_user, accessToken}))
+        return res.send(success(200, { user: existing_user, accessToken }))
         // return res.status(200).json({
         //     accessToken
         // })
@@ -127,11 +134,47 @@ const generateRefreshToken = (data) => {
         console.log(error);
     }
 }
+function makeOtp() {
+    const min = 100000;
+    const max = 999999
+    const otp = Math.floor(Math.random() * (max - min) + min);
+    return otp;
+}
+const generateOTP = async (req, res) => {
+    try {
+        const { email } = req.body;
+        console.log("user email is ", email);
+        if (!email) {
+            res.send(error(400, "Either name or email, password or name missing!!"));
+            return;
+        }
+        const otp = makeOtp();
+        console.log("otp is ", otp);
+        const mailOptions = {
+            from: 'healthheavenpw1@gmail.com',
+            to: `${email}`,
+            subject: 'Email Verification',
+            text: `You email verification code is : ${otp}. Please enter these otp while sign up`,
+        };
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log("Error sending mail : ", error);
+            }
+            else {
+                console.log("Email sent : ", info.response);
+                res.send(success(200, otp));
+            }
+        })
+    } catch (e) {
+        console.log("error from try catch", e);
+    }
 
+}
 export default {
     signupController,
     loginController,
     generateRefreshTokenController,
-    logoutController
+    logoutController,
+    generateOTP
 
 }
