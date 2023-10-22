@@ -1,8 +1,9 @@
 import express from 'express';
-import { getGymSuppliments } from '../Controllers/storeControllers.js';
+import { getProducts } from '../Controllers/storeControllers.js';
+
 
 const Router = express.Router();
 
-Router.get('/getProducts', getGymSuppliments);
+Router.get('/getProducts/:product', getProducts);
 
 export default Router;
