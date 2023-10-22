@@ -1,9 +1,13 @@
 import * as cheerio from 'cheerio';
 import axios from "axios";
+import { success, error } from '../Utils/responseWrapper.js';
 
-export const getGymSuppliments = async (req, res) => {
-    const url = `https://www.flipkart.com/search?q=gym+equipment`;
-    const url2 = `https://www.flipkart.com/search?q=gym%20supplements`;
+export const getProducts = async (req, res) => {
+
+    const { product } = req.params;
+    console.log(product);
+
+    const url2 = `https://www.flipkart.com/search?q=${product}`;
     let products = [];
 
     try {
@@ -56,7 +60,8 @@ export const getGymSuppliments = async (req, res) => {
             products[i] = {...products[i], price: product.text()};
         });
 
-        res.send(products);
+        // console.log(products);
+        res.send(success(200, products));
         
     } catch (error) {
         console.log("Err in getProducts: ", error);
