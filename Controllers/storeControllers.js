@@ -1,17 +1,22 @@
 import * as cheerio from 'cheerio';
 import axios from "axios";
 import { success, error } from '../Utils/responseWrapper.js';
+import fetch from 'node-fetch';
 
 export const getProducts = async (req, res) => {
 
     const { product } = req.params;
-    console.log(product);
 
     const url2 = `https://www.flipkart.com/search?q=${product}`;
+    const url = `https://www.flipkart.com/search?q=gym+supplement`;
     let products = [];
 
     try {
+        // let response = await fetch(url2, {
+        //     method: 'GET'
+        // });
         let response = await axios.get(url2);
+        console.log(response);
         let $ = await cheerio.load(response.data);
 
         // Title, Product Href
@@ -28,7 +33,7 @@ export const getProducts = async (req, res) => {
         $(`._4ddWXP .CXW8mj img`).each((i, e) => {
             let product = $(e);
             // console.log(product);
-            products[i] = {...products[i], imgHref: product[0].attribs.src};
+            products[i] = { ...products[i], imgHref: product[0].attribs.src };
             // productImageUrl.push({imgHref: product[0].attribs.src});
         })
 
@@ -36,33 +41,32 @@ export const getProducts = async (req, res) => {
         $('span ._3LWZlK').each((i, e) => {
             let product = $(e);
             // console.log(product);
-            products[i] = {...products[i], rating: product.text()};
+            products[i] = { ...products[i], rating: product.text() };
         });
 
         // users_rated
         $('._2_R_DZ').each((i, e) => {
             let product = $(e);
             // console.log(product);
-            products[i] = {...products[i], users_rated: product.text()};
+            products[i] = { ...products[i], users_rated: product.text() };
         });
 
         // percent_off
         $('._8VNy32 ._25b18c ._3Ay6Sb span').each((i, e) => {
             let product = $(e);
             // console.log(product);
-            products[i] = {...products[i], percent_off: product.text()};
+            products[i] = { ...products[i], percent_off: product.text() };
         });
 
         // Price
         $('._8VNy32 ._25b18c ._30jeq3').each((i, e) => {
             let product = $(e);
             // console.log(product);
-            products[i] = {...products[i], price: product.text()};
+            products[i] = { ...products[i], price: product.text() };
         });
 
         // console.log(products);
         res.send(success(200, products));
-        
     } catch (error) {
         console.log("Err in getProducts: ", error);
     }
