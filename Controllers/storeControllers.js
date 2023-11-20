@@ -16,8 +16,8 @@ export const getProducts = async (req, res) => {
         //     method: 'GET'
         // });
         let response = await axios.get(url2);
-        console.log(response);
-        let $ = await cheerio.load(response.data);
+        // console.log(response);
+        let $ = cheerio.load(response.data);
 
         // Title, Product Href
         $('.s1Q9rs').each((i, e) => {
