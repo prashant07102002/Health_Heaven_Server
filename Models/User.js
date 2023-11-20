@@ -17,6 +17,24 @@ const userSchema = Schema({
     lastName: {
         type: String,
         require: true
+    },
+    height: {
+        type: Number,
+    },
+    weight: {
+        type: Number,
+    },
+    age: {
+        type: Number,
+    },
+    gender: {
+        type: String,
+    },
+    activityLevel: {
+        type: String,
+    },
+    calculatedCalories: {
+        type: Number,
     }
 })
 export default model('user', userSchema);
