@@ -16,7 +16,6 @@ export const getProducts = async (req, res) => {
         //     method: 'GET'
         // });
         let response = await axios.get(url2);
-        // console.log(response);
         let $ = cheerio.load(response.data);
 
         // Title, Product Href
@@ -69,5 +68,6 @@ export const getProducts = async (req, res) => {
         res.send(success(200, products));
     } catch (error) {
         console.log("Err in getProducts: ", error);
+        res.send(error(401, "Cannot find Products"));
     }
 };
