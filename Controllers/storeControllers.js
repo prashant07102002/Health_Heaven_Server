@@ -7,7 +7,7 @@ export const getProducts = async (req, res) => {
 
     const { product } = req.params;
 
-    const url2 = `https://www.flipkart.com/search?q=${product}`;
+    const url2 = `https://www.flipkart.com/search?q=${product}&otracker=search&otracker1=search&marketplace=FLIPKART&as-show=on&as=off`;
     const url = `https://www.flipkart.com/search?q=gym+supplement`;
     let products = [];
 
@@ -15,8 +15,15 @@ export const getProducts = async (req, res) => {
         // let response = await fetch(url2, {
         //     method: 'GET'
         // });
-        let response = await axios.get(url2);
-        // console.log(response);
+        // let response = await axios.get(url);
+        let response = await axios.get(url2, {
+            responseType: "arraybuffer",
+            headers: {
+                "Content-Type": "text/html; charset=UTF-8"
+            }
+        })
+        
+        console.log(response);
         let $ = cheerio.load(response.data);
 
         // Title, Product Href
@@ -67,7 +74,8 @@ export const getProducts = async (req, res) => {
 
         // console.log(products);
         res.send(success(200, products));
-    } catch (error) {
-        console.log("Err in getProducts: ", error);
+    } catch (e) {
+        console.log("Err in getProducts: ", e);
+        res.send(error(500,  "Not Loading, Slow Network connection, Try again"))
     }
 };
