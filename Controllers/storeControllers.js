@@ -17,7 +17,7 @@ export const getProducts = async (req, res) => {
         // });
         let response = await axios.get(url2);
         console.log(response);
-        let $ = await cheerio.load(response.data);
+        let $ = cheerio.load(response.data);
 
         // Title, Product Href
         $('.s1Q9rs').each((i, e) => {
@@ -69,5 +69,6 @@ export const getProducts = async (req, res) => {
         res.send(success(200, products));
     } catch (error) {
         console.log("Err in getProducts: ", error);
+        res.send(error(401, "Cannot find Products"));
     }
 };

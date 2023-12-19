@@ -41,9 +41,7 @@ export const getNearbyGyms = async (req, res) => {
     //     longitude
     //   }
     // });
-
     // const data = await response.json();
-
     res.status(200).send({ results: nearbyGyms });
   } catch (error) {
     console.log(err);
